@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Arvo:ital@0;1&family=Roboto+Slab:wght@400&display=swap" rel="stylesheet">
+	<title>Jorren.</title>
+	<style>
+		:root {
+			--background-color: #111111;
+			--text-primary-color: #cacaca;
+			--text-highlight-color: #961b96;
+			--text-link-color: #365db1;
+			--text-shadow-color: #353535;
+		}
+
+		body, html {
+			box-sizing: border-box;
+			width: 100%;
+			height: 100%;
+			margin: 0;
+		}
+
+		body {
+			display: flex;
+			flex-flow: column nowrap;
+			justify-content: center;
+			align-items: center;
+			color: var(--text-primary-color);
+			background-color: var(--background-color);
+			perspective: 1000px;
+			overflow: hidden;
+			font-family: 'Arvo', serif;
+		}
+
+		.introduction {
+			font-size: 32pt;
+			word-spacing: 0.2em;
+		}
+
+		.perspective {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			transform-style: preserve-3d;
+			width: 90vw;
+			height: 150px;
+			max-width: 900px;
+		}
+
+		.me {
+			font-family: 'Roboto Slab', serif;
+			text-align: center;
+			display: inline-block;
+			margin: 0;
+			font-size: 64pt;
+			transition: all 0.2s ease-out;
+			text-shadow: var(--text-shadow-color) 0 0 20px;
+		}
+
+		.keyword {
+			font-style: italic;
+			color: var(--text-highlight-color);
+		}
+
+		.links {
+			position: absolute;
+			display: flex;
+			bottom: 1em;
+			right: 1em;
+			gap: 1em;
+			font-size: 18px;
+		}
+
+		.links>a {
+			text-decoration: none;
+			color: var(--text-link-color);
+		}
+
+		.links>a:hover, .links>a:active {
+			color: var(--text-highlight-color);
+		}
+
+		.links>a:before {
+			content: '[';
+			margin-right: 0.2em;
+			color: var(--text-primary-color);
+		}
+		
+		.links>a:after {
+			content: ']';
+			margin-left: 0.2em;
+			color: var(--text-primary-color);
+		}
+	</style>
+</head>
+
+<body>
+	<header class="introduction">
+		<span class="keyword">let</span>
+		<span>my_name</span>
+		<span class="keyword">=</span>
+	</header>
+	<section class="perspective">
+		<h1 class="me">Jorren</h1>
+	</section>
+	<footer class="links">
+		<a href="https://github.com/jorrenh" title="github/JorrenH" alt="Github">Github</a>
+		<a href="https://linkedin.com/in/jorren-hendriks" title="linkedin/jorren-hendriks" alt="LinkedIn">Linkedln</a>
+	</footer>
+
+	<script>
+		const me = document.querySelector('.me');
+		const container = document.querySelector('.perspective');
+
+		function updateTransform(rotateX, rotateY, translateX, translateY) {
+			translateX = Math.max(-150, Math.min(150, translateX));
+			translateY = Math.max(-50, Math.min(50, translateY));
+
+			me.style.transform = `
+        rotateX(${rotateX}deg) 
+        rotateY(${rotateY}deg) 
+        translateZ(20px)
+        translateX(${translateX}px)
+        translateY(${translateY}px)
+      `;
+
+			const shadowX = -translateX / 5;
+			const shadowY = -translateY / 5;
+			me.style.textShadow = `
+        ${shadowX}px ${shadowY}px 20px var(--text-shadow-color)
+      `;
+		}
+
+		document.addEventListener('mousemove', (event) => {
+			const containerRect = container.getBoundingClientRect();
+			const containerCenterX = containerRect.left + containerRect.width / 2;
+			const containerCenterY = containerRect.top + containerRect.height / 2;
+
+			const mouseX = event.clientX;
+			const mouseY = event.clientY;
+
+			const rotateY = (mouseX - containerCenterX) / 50;
+			const rotateX = (containerCenterY - mouseY) / 50;
+
+			const translateX = (mouseX - containerCenterX) / 5;
+			const translateY = (mouseY - containerCenterY) / 5;
+
+			updateTransform(rotateX, rotateY, translateX, translateY);
+		});
+
+		window.addEventListener('deviceorientation', (event) => {
+			const tiltLR = event.gamma;
+			const tiltFB = event.beta;
+
+			const rotateY = tiltLR / 5;
+			const rotateX = -tiltFB / 5;
+
+			const translateX = tiltLR * 2;
+			const translateY = tiltFB * 2;
+
+			updateTransform(rotateX, rotateY, translateX, translateY);
+		});
+	</script>
+</body>
+
+</html>
